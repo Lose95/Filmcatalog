@@ -1,0 +1,31 @@
+.film-list-item{
+    display: flex;
+    margin: 15px 0
+}
+
+.film-list-item .film-cover{
+    flex-shrink: 0;
+    width:120px;
+    margin-right: 30px;
+}
+
+.book-list-item .film-cover img{
+    max-width:100%;
+}
+
+.film-list-item .film-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 10px;
+    align-items: flex-start;
+  }
+  
+  .film-list-item .film-details .film-title {
+    font-size: 1.2rem;
+  }
+  
+  .film-list-item .film-details .film-price {
+    font-size: 1.4rem;
+  }
+  
