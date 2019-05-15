@@ -3,51 +3,62 @@ import FilmListItem from '../film-list-item';
 import './film-list.css'
 import { connect } from 'react-redux';
 import { withFilmcatalogService } from '../hoc'
-import {filmsLoaded} from '../../actions';
+import { fetchFilms, filmAddedToFavorite } from '../../actions';
 import {compose} from '../../utils';
+import Spinner from '../spinner/spiner';
+import ErrorIndicator from '../error-indicator/error-indicator';
 
-class FilmList extends Component {
+const FilmList =({films, onAddedToFavorite}) =>{
+  return (
+    <ul className="film-list">
+     {
+        films.map((film) => {
+          return (
+            <li key={film.id}>
+             <FilmListItem 
+             film={film}
+             onAddedToFavorite ={ ()=> onAddedToFavorite(film.id)}
+             />
+            </li>
+          )
+          
+        })
+      }
+  </ul>
+  
+  );
+}
+class FilmListContainer extends Component {
 
   componentDidMount() {
-    const { filmcatalogService } = this.props;
-    const data = filmcatalogService.getFilms();
-
-    
-    this.props.filmsLoaded(data);
-    
-      
-  }
+    this.props.fetchFilms();
+}
       
   render() {
-      const { films } = this.props;
-      return (
-        console.log(films),
-       <ul className="film-list">
-         {
-            films.map((film) => {
-              return (
-                <li key={film.id}><FilmListItem film={film}/></li>
-              )
-              
-            })
-          }
-      </ul>
-      
-      );
-  }
+      const { films, loading, error, onAddedToFavorite } = this.props;
+      if (loading){
+        return <Spinner />
+      }
+      if (error){
+        return <ErrorIndicator />
+      }
+      return <FilmList films={films} onAddedToFavorite={onAddedToFavorite}/>;
+ }
 }
 
-const mapStateToProps = ({ films }) => {
+const mapStateToProps = ({ films, loading, error }) => {
   
-    return { films };
+    return { films, loading, error  };
 };
 
-const mapDispatchToProps = {
-     filmsLoaded
+const mapDispatchToProps = (dispatch, {filmcatalogService}) => {
+     return {
+       fetchFilms: fetchFilms(filmcatalogService, dispatch),
+       onAddedToFavorite:(id) => dispatch(filmAddedToFavorite(id))
+    }; 
  };
-
 export default compose(
   withFilmcatalogService(),
   connect(mapStateToProps, mapDispatchToProps)
-)(FilmList);
+)(FilmListContainer);
 
